@@ -9,3 +9,9 @@ def check_params(required_list, incoming_params):
             return False
 
     return True
+
+def bad_request():
+    return HTTP(400, **{'Access-Control-Allow-Origin': '*'})
+
+def not_found():
+    return HTTP(404, **{'Access-Control-Allow-Origin': '*'})
