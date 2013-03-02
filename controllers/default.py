@@ -3,29 +3,54 @@ def index():
 
 @request.restful()
 def api():
+    '''
+       Documentation:
+           https://github.com/4350uvs/4350api/wiki 
+    '''
 
     def GET(*args, **params):
-        if len(args) == 0 or args[0] != 'polls':
-            raise bad_request()
+        '''
+            handles:
+                1. GET /polls
+                2. GET /polls/:pid
+        '''
 
-        if len(args) == 1:
-            # all polls
+        if len(args) == 1 and args[0] == 'polls':
+            # POST /polls
             polls = db().select(db.polls.ALL).as_list()
             return dict(polls = polls)
-        elif len(args) == 2 and args[1].isdigit():
-            # specific poll
+
+        elif len(args) == 2 and args[0] == 'polls' and args[1].isdigit():
+            # GET /polls/:pid
             pid = args[1]
             poll = db.polls[pid]
 
             if poll is not None:
-                # TODO query all poll options
-                return dict(poll = poll)
+                choices = db(db.pollChoices.pid == pid).select(db.pollChoices.content)
+
+                # we want to return a json array so we use Python's list
+                choicesArray = []
+                for choice in choices:
+                    choicesArray.append(choice["content"])
+    
+                return dict(
+                    poll = dict(
+                        id = poll.id,
+                        title = poll.title,
+                        choices = choicesArray
+                    )
+                )
             else:
-                raise not_found();
+                raise not_found()
+
         else:
-            return locals();
+            raise not_found()
 
     def POST(first_arg, **params):
+        '''
+            handles:
+                1. POST /polls
+        '''
         if not first_arg == 'polls':
             raise bad_request()
 
