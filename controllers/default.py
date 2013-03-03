@@ -1,5 +1,5 @@
 def index():
-    return "Hello 4350api: no view, only JSON";
+    return "This is the 4350api. No view, only a JSON return.";
 
 @request.restful()
 def api():
