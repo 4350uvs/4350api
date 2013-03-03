@@ -35,6 +35,7 @@ def api():
                         choices = choices
                     )
                 )
+
             else:
                 raise not_found()
 
@@ -46,21 +47,25 @@ def api():
             handles:
                 1. POST /polls
         '''
-        if not first_arg == 'polls':
-            raise bad_request()
+        if first_arg == 'polls':
 
-        if not check_params(['title', 'choice'], params):
-            raise bad_request()
+            if check_params(['title', 'choice'], params):
 
-        # insert poll
-        pid = db.polls.insert(title = params['title'])
-        # insert poll choices
-        choice_param = params['choice']
-        if isinstance(choice_param, str):
-            choice_param = [choice_param]
-        for choice in choice_param:
-            db.pollChoices.insert(pid = pid, content = choice)
+                # insert poll
+                pid = db.polls.insert(title = params['title'])
 
-        raise HTTP(201, pid, **{'Access-Control-Allow-Origin': '*', 'Content-Type': 'text/plain; charset=UTF-8'})
+                # insert poll choices
+                choice_param = params['choice']
+                if isinstance(choice_param, str):
+                    choice_param = [choice_param]
+                for choice in choice_param:
+                    db.pollChoices.insert(pid = pid, content = choice)
+
+                raise HTTP(201, pid, **{'Access-Control-Allow-Origin': '*', 'Content-Type': 'text/plain; charset=UTF-8'})
+
+            else:
+                raise bad_request()
+        else:
+            raise not_found()
 
     return locals();
