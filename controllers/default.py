@@ -26,18 +26,13 @@ def api():
             poll = db.polls[pid]
 
             if poll is not None:
-                choices = db(db.pollChoices.pid == pid).select(db.pollChoices.content)
+                choices = db(db.pollChoices.pid == pid).select(db.pollChoices.content, db.pollChoices.id)
 
-                # we want to return a json array so we use Python's list
-                choicesArray = []
-                for choice in choices:
-                    choicesArray.append(choice["content"])
-    
                 return dict(
                     poll = dict(
                         id = poll.id,
                         title = poll.title,
-                        choices = choicesArray
+                        choices = choices
                     )
                 )
             else:
