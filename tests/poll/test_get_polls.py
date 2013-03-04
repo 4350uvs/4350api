@@ -1,39 +1,14 @@
-import sys
-import os
+from tests.common import CommonTestCase
 
-import urllib
-
-# web2py imports
-
-sys.path.append(os.path.abspath('/home/www-data/web2py/gluon'))
-
-from contrib import simplejson
-
-# unit test import
-
-import unittest
-
-
-class TestGetPolls(unittest.TestCase):
+class TestGetPolls(CommonTestCase):
     
     def setUp(self):
-        self.root = 'http://127.0.0.1:8274'
+        super(TestGetPolls, self).setUp()
+        
+        self.responseJson = self.parseJson(self.get('/polls'))
     
-    def test_get_polls(self):
-        
-        response = urllib.urlopen(self.root + '/polls').read()
-        
-        responseJson = None
-        try:
-            responseJson = simplejson.loads(response)
-        except simplejson.JSONDecodeError:
-            self.fail("invalid response")
-
-        self.assertEquals(type(responseJson), dict)
-
-        self._test_polls_json_structure(responseJson)
-
-    def _test_polls_json_structure(self, pollsJson):
+    def test_polls_json_structure(self):
+        pollsJson = self.responseJson
         
         self.assertTrue('polls' in pollsJson)
         self.assertEquals(len(pollsJson), 1)
@@ -41,13 +16,18 @@ class TestGetPolls(unittest.TestCase):
         polls = pollsJson['polls']
         self.assertEquals(type(polls), list)
         
-        if len(polls) > 0:
-            self._test_specific_poll_json_structure_in_polls(polls[0])
+    def test_poll_in_polls(self):
+        polls = self.responseJson['polls']
+        if len(polls) < 1:
+            return
         
-    def _test_specific_poll_json_structure_in_polls(self, pollJson):
+        for pollJson in polls:
         
-        self.assertEquals(type(pollJson), dict)
-        self.assertEquals(len(pollJson), 2)
-        
-        self.assertTrue('title' in pollJson)
-        self.assertTrue('id' in pollJson)
+            self.assertEquals(type(pollJson), dict)
+            self.assertEquals(len(pollJson), 2)
+            
+            self.assertTrue('id' in pollJson)
+            self.assertEquals(type(pollJson['id']), int)
+            
+            self.assertTrue('title' in pollJson)
+            self.assertEquals(type(pollJson['title']), unicode)
