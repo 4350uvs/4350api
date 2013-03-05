@@ -3,7 +3,7 @@ from tests.common import CommonTestCase
 class TestGetPoll(CommonTestCase):
     
     def setUp(self):
-        super(TestGetPoll, self).setUp()
+        self.post('/polls', {'title': 'unit test', 'choice': 'unit test'})
         
         self.responseJson = self.parseJson(self.get('/polls/1'))
     

@@ -3,8 +3,9 @@ from tests.common import CommonTestCase
 class TestGetPolls(CommonTestCase):
     
     def setUp(self):
-        super(TestGetPolls, self).setUp()
-        
+
+        self.post('/polls', {'title': 'unit test', 'choice': 'unit test'})
+
         self.responseJson = self.parseJson(self.get('/polls'))
     
     def test_polls_json_structure(self):
@@ -18,8 +19,6 @@ class TestGetPolls(CommonTestCase):
         
     def test_poll_in_polls(self):
         polls = self.responseJson['polls']
-        if len(polls) < 1:
-            return
         
         for pollJson in polls:
         
