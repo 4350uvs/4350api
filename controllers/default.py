@@ -68,4 +68,31 @@ def api():
         else:
             raise not_found()
 
+    def PUT(*args, **params):
+        '''
+            handles:
+                1. PUT /polls/:pid/choices
+        '''
+        
+        if len(args) is 3 and args[0] == 'polls' and args[1].isdigit() and args[2] == 'choices':
+            
+            if check_params(['cid'], params):
+                pid = args[1]
+                poll = db.polls[pid]
+                if poll is not None:
+                    cid = params['cid']
+                    choice = db((db.pollChoices.pid == pid) & (db.pollChoices.id == cid)).select().first()
+                    if choice is not None:
+                        id = db.userChose.insert(cid = cid)
+                        if id is None:
+                            raise bad_request()
+                    else:
+                        raise bad_request()
+                else:
+                    raise not_found()
+            else:
+                raise bad_request()
+        else:
+            raise not_found()
+
     return locals();
