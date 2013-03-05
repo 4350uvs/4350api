@@ -1,4 +1,4 @@
-from tests.common import CommonTestCase
+from tests.common import CommonTestCase, HTTPCode
 
 class TestPostPolls(CommonTestCase):
     
@@ -21,17 +21,13 @@ class TestPostPolls(CommonTestCase):
         for data in self.badQueryData:
             self.assertEquals(type(data), dict)
             self._post(data)
-            self.assertEquals(self.response['code'], HTTP.BAD_REQUEST)
+            self.assertEquals(self.response['code'], HTTPCode.BAD_REQUEST)
 
     def test_reponse_code_created(self):
         for data in self.goodQueryData:
             self._post(data)
-            self.assertEquals(self.response['code'], HTTP.CREATED)
+            self.assertEquals(self.response['code'], HTTPCode.CREATED)
             try:
                 int(self.response['body'])
             except ValueError as e:
                 self.fail('POST /poll returns non-integer. ' + str(e))
-
-class HTTP:
-    BAD_REQUEST = 400
-    CREATED = 201
