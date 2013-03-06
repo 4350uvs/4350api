@@ -1,8 +1,16 @@
 import datetime
 
 def index():
-
     return "This is the 4350api. No view, only a JSON return.";
+
+@request.restful()
+
+def api():
+    '''
+    Documentation:  	
+        https://github.com/4350uvs/4350api/wiki 	  	
+    '''
+    return "This is the 4350api. No view, only a JSON return.";    
 
     def GET(*args, **params):
         '''
