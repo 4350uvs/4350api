@@ -1,12 +1,8 @@
-def index():
-    return "This is the 4350api. No view, only a JSON return.";
+import datetime
 
-@request.restful()
-def api():
-    '''
-       Documentation:
-           https://github.com/4350uvs/4350api/wiki 
-    '''
+def index():
+
+    return "This is the 4350api. No view, only a JSON return.";
 
     def GET(*args, **params):
         '''
@@ -17,21 +13,23 @@ def api():
 
         if len(args) == 1 and args[0] == 'polls':
             # POST /polls
-            polls = db().select(db.polls.ALL).as_list()
+            polls = db(db.Session.type == 'poll').select(db.Session.ALL).as_list()
             return dict(polls = polls)
 
         elif len(args) == 2 and args[0] == 'polls' and args[1].isdigit():
             # GET /polls/:pid
             pid = args[1]
-            poll = db.polls[pid]
+            poll = db.Session[pid]
 
-            if poll is not None:
-                choices = db(db.pollChoices.pid == pid).select(db.pollChoices.content, db.pollChoices.id)
+            if poll is not None and poll.type == 'poll':
+                q = db(db.Question.sessionID == pid).select(db.Question.ALL)
+                choices = db(db.MultipleChoice.questionID == q.id).select(db.MultipleChoice.choiceText, db.MultipleChoice.id)
 
                 return dict(
                     poll = dict(
-                        id = poll.id,
-                        title = poll.title,
+                        id = Session.id,
+                        title = Session.name,
+                        question = q.questionText,
                         choices = choices
                     )
                 )
@@ -49,17 +47,21 @@ def api():
         '''
         if first_arg == 'polls':
 
-            if check_params(['title', 'choice'], params):
+            if check_params(['title', 'question', 'choice'], params):
 
                 # insert poll
-                pid = db.polls.insert(title = params['title'])
+                now = datetime.datetime.now()
+                sid = db.Session.insert(name = params['title'], timeCreated = now, type = 'poll')
+                
+                # insert question
+                qid = db.Question.insert(sessionID = sid, questionText = params['question'], code = 'MC')
 
                 # insert poll choices
                 choice_param = params['choice']
                 if isinstance(choice_param, str):
                     choice_param = [choice_param]
                 for choice in choice_param:
-                    db.pollChoices.insert(pid = pid, content = choice)
+                    db.MultipleChoice.insert(questionID = qid, text = choice, correct = False)
 
                 raise HTTP(201, pid, **{'Access-Control-Allow-Origin': '*', 'Content-Type': 'text/plain; charset=UTF-8'})
 
@@ -67,6 +69,7 @@ def api():
                 raise bad_request()
         else:
             raise not_found()
+
 
     def PUT(*args, **params):
         '''
@@ -77,13 +80,16 @@ def api():
         if len(args) is 3 and args[0] == 'polls' and args[1].isdigit() and args[2] == 'choices':
             
             if check_params(['cid'], params):
-                pid = args[1]
-                poll = db.polls[pid]
-                if poll is not None:
+                sid = args[1]
+                poll = db.Session[sid]
+                if poll is not None and poll.type == 'poll':
                     cid = params['cid']
-                    choice = db((db.pollChoices.pid == pid) & (db.pollChoices.id == cid)).select().first()
+                    qid = db(db.Question.sessionID == sid).select(db.Question.id)
+                    choice = db((db.MultipleChoice.questionID == qid) & (db.MultipleChoice.id == cid)).select().first()
                     if choice is not None:
-                        id = db.userChose.insert(cid = cid)
+                        now = datetime.datetime.now()
+                        saID = db.SessionAnswer.insert(sessionID = sid, submitTime = now)
+                        id = db.Answer.insert(sessionAnswerID = saID, questionID = qid, answerText = cid)
                         if id is None:
                             raise bad_request()
                     else:
