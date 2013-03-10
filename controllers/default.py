@@ -1,5 +1,3 @@
-import datetime
-
 def index():
     return "This is the 4350api. No view, only a JSON return.";
 
@@ -59,8 +57,7 @@ def api():
             if check_params(['title', 'question', 'choice'], params):
 
                 # insert poll
-                now = datetime.datetime.now()
-                sid = db.Session.insert(name = params['title'], timeCreated = now, type = 'poll')
+                sid = db.Session.insert(name = params['title'], type = 'poll')
                 
                 # insert question
                 qid = db.Question.insert(sessionID = sid, questionText = params['question'], code = 'MC')
@@ -96,8 +93,7 @@ def api():
                     qid = db(db.Question.sessionID == sid).select(db.Question.id)
                     choice = db((db.MultipleChoice.questionID == qid) & (db.MultipleChoice.id == cid)).select().first()
                     if choice is not None:
-                        now = datetime.datetime.now()
-                        saID = db.SessionAnswer.insert(sessionID = sid, submitTime = now)
+                        saID = db.SessionAnswer.insert(sessionID = sid)
                         id = db.Answer.insert(sessionAnswerID = saID, questionID = qid, answerText = cid)
                         if id is None:
                             raise bad_request()

@@ -33,7 +33,7 @@ db.define_table('Membership',
 db.define_table('uvsSession',
     Field('name'),
     Field('sessionOwner', 'reference uvsGroup'),
-    Field('timeCreated', 'datetime'),
+    Field('timeCreated', 'datetime', default=request.now),
     Field('uvsType'),
     Field('password'),
     Field('startDate', 'date'),
@@ -52,7 +52,7 @@ db.define_table('MultipleChoice',
 db.define_table('SessionAnswer',
     Field('sessionID', 'reference uvsSession'),
     Field('responder', 'reference uvsUser'),
-    Field('submitTime', 'datetime'))
+    Field('submitTime', 'datetime', default=request.now))
 
 db.define_table('Answer',
     Field('sessionAnswerID', 'reference SessionAnswer'),
