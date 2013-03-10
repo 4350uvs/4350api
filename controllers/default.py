@@ -22,7 +22,7 @@ def api():
 
         if len(args) == 1 and args[0] == 'polls':
             # POST /polls
-            polls = db(db.Session.type == 'poll').select(db.Session.ALL).as_list()
+            polls = db(db.uvsSession.uvsType == 'poll').select(db.uvsSession.ALL).as_list()
             return dict(polls = polls)
 
         elif len(args) == 2 and args[0] == 'polls' and args[1].isdigit():
