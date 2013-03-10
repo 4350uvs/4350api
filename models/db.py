@@ -11,36 +11,36 @@ def getDb():
         db_name = 'unittest'
     
     uri = "sqlite://{0}.sqlite".format(db_name)
-    return DAL(uri, lazy_tables=True)
+    return DAL(uri, lazy_tables=True, check_reserved=['all'])
 
 
 db = getDb()
 
-db.define_table('User',
+db.define_table('uvsUser',
     Field('username', notnull=True, unique=True),
     Field('password', notnull=True),
     Field('name'),
     Field('email'))
 
-db.define_table('Group',
+db.define_table('uvsGroup',
     Field('name', notnull=True))
 
 db.define_table('Membership',
-    Field('userID', 'reference User'),
-    Field('groupID', 'reference Group'),
-    Field('owner', 'boolean'))
+    Field('userID', 'reference uvsUser'),
+    Field('groupID', 'reference uvsGroup'),
+    Field('uvsOwner', 'boolean'))
 
-db.define_table('Session',
+db.define_table('uvsSession',
     Field('name'),
-    Field('sessionOwner', 'reference Group'),
+    Field('sessionOwner', 'reference uvsGroup'),
     Field('timeCreated', 'datetime'),
-    Field('type'),
+    Field('uvsType'),
     Field('password'),
     Field('startDate', 'date'),
     Field('endDate', 'date'))
 
 db.define_table('Question',
-    Field('sessionID', 'reference Session'),
+    Field('sessionID', 'reference uvsSession'),
     Field('questionText', 'text'),
     Field('code'))
 
@@ -50,8 +50,8 @@ db.define_table('MultipleChoice',
     Field('Correct', 'boolean'))
 
 db.define_table('SessionAnswer',
-    Field('sessionID', 'reference Session'),
-    Field('responder', 'reference User'),
+    Field('sessionID', 'reference uvsSession'),
+    Field('responder', 'reference uvsUser'),
     Field('submitTime', 'datetime'))
 
 db.define_table('Answer',
