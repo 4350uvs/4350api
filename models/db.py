@@ -3,9 +3,10 @@ def getDb():
         returns a test DAL object when user agent is unittest; otherwise default
     '''
     
-    db_name = "db" # default
+    db_name = "uvs" # default
     
-    # use another database for unittest so that it doesn't mess up current database
+    # use another database for unit tests (in tests directory) so that it doesn't
+    # mess up current database
     if (request.env.http_user_agent == 'unittest'):
         db_name = 'unittest'
     
@@ -14,10 +15,6 @@ def getDb():
 
 
 db = getDb()
-
-
-db = DAL("sqlite://uvs.db", lazy_tables=True)
-
 
 db.define_table('User',
     Field('username', notnull=True, unique=True),
@@ -40,7 +37,7 @@ db.define_table('Session',
     Field('type'),
     Field('password'),
     Field('startDate', 'date'),
-    Field('endDate', 'date))
+    Field('endDate', 'date'))
 
 db.define_table('Question',
     Field('sessionID', 'reference Session'),
