@@ -23,7 +23,7 @@ db.define_table('polls',
 
 db.define_table('pollChoices',
     Field('pid', 'reference polls'),
-    Field('content'))
+    Field('uvsContent'))
 
 db.define_table('userChose',
     Field('cid', 'reference pollChoices'))

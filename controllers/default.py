@@ -28,7 +28,12 @@ def api():
             poll = db.polls[pid]
 
             if poll is not None:
-                choices = db(db.pollChoices.pid == pid).select(db.pollChoices.content, db.pollChoices.id)
+                choices = db(db.pollChoices.pid == pid).select(db.pollChoices.uvsContent, db.pollChoices.id)
+                
+                # return "content" instead of "uvsContent"
+                for choiceDict in choices:
+                    choiceDict.content = choiceDict.uvsContent
+                    del choiceDict.uvsContent
 
                 return dict(
                     poll = dict(
@@ -61,7 +66,7 @@ def api():
                 if isinstance(choice_param, str):
                     choice_param = [choice_param]
                 for choice in choice_param:
-                    db.pollChoices.insert(pid = pid, content = choice)
+                    db.pollChoices.insert(pid = pid, uvsContent = choice)
 
                 raise HTTP(201, pid, **{'Access-Control-Allow-Origin': '*', 'Content-Type': 'text/plain; charset=UTF-8'})
 
