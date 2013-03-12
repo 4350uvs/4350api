@@ -3,7 +3,7 @@ def getDb():
         returns a test DAL object when user agent is unittest; otherwise default
     '''
     
-    db_name = "uvs" # default
+    db_name = "db" # default
     
     # use another database for unit tests (in tests directory) so that it doesn't
     # mess up current database
@@ -15,6 +15,20 @@ def getDb():
 
 
 db = getDb()
+
+# polls storage
+
+db.define_table('polls',
+    Field('title'))
+
+db.define_table('pollChoices',
+    Field('pid', 'reference polls'),
+    Field('content'))
+
+db.define_table('userChose',
+    Field('cid', 'reference pollChoices'))
+
+# tables to store other stuff: surveys, lectures and elections
 
 db.define_table('uvsUser',
     Field('username', notnull=True, unique=True),
