@@ -3,5 +3,6 @@ progress.log
 *.bak
 errors/
 sessions/
+databases/
 
 *.pyc
