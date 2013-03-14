@@ -30,9 +30,12 @@ def api():
             if poll is not None:
                 choices = db(db.pollChoices.pid == pid).select(db.pollChoices.uvsContent, db.pollChoices.id)
                 
-                # return "content" instead of "uvsContent"
                 for choiceDict in choices:
+                    # return "content" instead of "uvsContent"
                     choiceDict.content = choiceDict.uvsContent
+                    # include chosenTimes
+                    choiceDict.chosenTimes = db(db.userChose.cid == choiceDict.id).count()
+
                     del choiceDict.uvsContent
 
                 return dict(

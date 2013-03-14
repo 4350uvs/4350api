@@ -37,10 +37,13 @@ class TestGetPoll(CommonTestCase):
         for choice in choices:
             
             self.assertEquals(type(choice), dict)
-            self.assertEquals(len(choice), 2)
+            self.assertEquals(len(choice), 3)
 
             self.assertTrue('id' in choice)
             self.assertEquals(type(choice['id']), int)
             
             self.assertTrue('content' in choice)
             self.assertEquals(type(choice['content']), unicode)
+            
+            self.assertTrue('chosenTimes' in choice)
+            self.assertEquals(type(choice['chosenTimes']), int)

@@ -16,6 +16,7 @@ class TestPostPolls(CommonTestCase):
         self.pid = self.post('/polls', {'title': '1 choices', 'choice': 'choice1'})['body']
         newestPoll = self.parseJson(self.get('/polls/' + self.pid))
         self.cid = newestPoll['poll']['choices'][0]['id']
+        self.currChosenTimes = newestPoll['poll']['choices'][0]['chosenTimes']
     
     def _put(self, pid, data):
         path = '/polls/{0}/choices'.format(pid)
@@ -40,5 +41,21 @@ class TestPostPolls(CommonTestCase):
         self.assertEquals(response['code'], HTTPCode.BAD_REQUEST)
         
     def test_reponse_code_ok(self):
+        # choseTimes is zero before PUT request
+        self.assertEquals(self.currChosenTimes, 0)
+        
         response = self._put(self.pid, {'cid': self.cid})
         self.assertEquals(response['code'], HTTPCode.OK)
+        
+        self._test_chosen_times_increased
+        
+        response = self._put(self.pid, {'cid': self.cid})
+        self.assertEquals(response['code'], HTTPCode.OK)
+        
+        self._test_chosen_times_increased
+    
+    def _test_chosen_times_increased(self):
+        testPoll = self.parseJson(self.get('/polls/' + self.pid))
+        chosenTimes = testPoll['poll']['choices'][0]['chosenTimes']
+        self.assertEquals(chosenTimes, self.currChosenTimes + 1)
+        
