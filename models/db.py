@@ -37,7 +37,7 @@ db.define_table('uvsUser',
     Field('email'))
 
 db.define_table('uvsGroup',
-    Field('name', notnull=True))
+    Field('name', notnull=True, unique=True))
 
 db.define_table('Membership',
     Field('userID', 'reference uvsUser'),
