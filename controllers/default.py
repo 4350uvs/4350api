@@ -106,7 +106,7 @@ def api():
                 for choice in choice_param:
                     db.pollChoices.insert(pid = pid, uvsContent = choice)
                     
-                raise HTTP(201, pid, **{'Access-Control-Allow-Origin': '*', 'Content-Type': 'text/plain; charset=UTF-8'})
+                raise created(pid)
 
             else:
                 raise bad_request()
@@ -121,7 +121,7 @@ def api():
                     # insert lectue
                     sid = db.uvsSession.insert(name = params['title'], sessionOwner = gid, uvsType = 'lecture', startDate = params['date'])
 
-                    raise HTTP(201, sid, **{'Access-Control-Allow-Origin': '*', 'Content-Type': 'text/plain; charset=UTF-8'})
+                    raise created(sid)
 
                 else: 
                     raise not_found()
@@ -143,13 +143,13 @@ def api():
                     # only the first answer is 'correct', make all others false
                     correctAnswer = False
 
-                raise HTTP(201, qid, **{'Access-Control-Allow-Origin': '*', 'Content-Type': 'text/plain; charset=UTF-8'})
+                raise created(qid)
 
             elif check_params(['session', 'title'], params):
                 # insert question (long answer)
                 qid = db.Question.insert(sessionID = params['session'], questionText = params['text'], code = 'LA')
 
-                raise HTTP(201, qid, **{'Access-Control-Allow-Origin': '*', 'Content-Type': 'text/plain; charset=UTF-8'})
+                raise created(qid)
 
             else:
                 raise bad_request()

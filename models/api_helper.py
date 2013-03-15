@@ -10,8 +10,13 @@ def check_params(required_list, incoming_params):
 
     return True
 
+# Note: Access-Control-Allow-Origin allows cross-domain ajax requests.
+
 def bad_request():
     return HTTP(400, **{'Access-Control-Allow-Origin': '*'})
 
 def not_found():
     return HTTP(404, **{'Access-Control-Allow-Origin': '*'})
+
+def created(response_body):
+    return HTTP(201, response_body, **{'Access-Control-Allow-Origin': '*', 'Content-Type': 'text/plain; charset=UTF-8'})
