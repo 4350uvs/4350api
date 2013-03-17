@@ -162,7 +162,7 @@ def api():
             handles:
                 1. PUT /polls/:pid/choices
         '''
-        
+
         if len(args) is 3 and args[0] == 'polls' and args[1].isdigit() and args[2] == 'choices':
             
             if check_params(['cid'], params):
@@ -175,12 +175,13 @@ def api():
                         id = db.userChose.insert(cid = cid)
                         if id is None:
                             raise bad_request()
+                        raise ok()
                     else:
-                        raise bad_request()
+                        raise bad_request('bad cid')
                 else:
-                    raise not_found()
+                    raise bad_request('bad pid')
             else:
-                raise bad_request()
+                raise bad_request('no cid in request body. ' + str(locals()))
 
         else:
             raise not_found()
