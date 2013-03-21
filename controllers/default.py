@@ -1,9 +1,6 @@
 def index():
     return "This is the 4350api. No view, only a JSON return.";
 
-def user():
-    return dict(form=auth())
-
 @request.restful()
 def api():
     '''
