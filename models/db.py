@@ -1,3 +1,5 @@
+from gluon.tools import Auth
+
 def getDb():
     '''
         returns a test DAL object when user agent is unittest; otherwise default
@@ -30,23 +32,12 @@ db.define_table('userChose',
 
 # tables to store other stuff: surveys, lectures and elections
 
-db.define_table('uvsUser',
-    Field('username', notnull=True, unique=True),
-    Field('password', notnull=True),
-    Field('name'),
-    Field('email'))
-
-db.define_table('uvsGroup',
-    Field('name', notnull=True, unique=True))
-
-db.define_table('Membership',
-    Field('userID', 'reference uvsUser'),
-    Field('groupID', 'reference uvsGroup'),
-    Field('uvsOwner', 'boolean'))
+auth = Auth(db)
+auth.define_tables()
 
 db.define_table('uvsSession',
     Field('name'),
-    Field('sessionOwner', 'reference uvsGroup'),
+    Field('sessionOwner', 'reference auth_group'),
     Field('timeCreated', 'datetime', default=request.now),
     Field('uvsType'),
     Field('password'),
@@ -65,7 +56,7 @@ db.define_table('MultipleChoice',
 
 db.define_table('SessionAnswer',
     Field('sessionID', 'reference uvsSession'),
-    Field('responder', 'reference uvsUser'),
+    Field('responder', 'reference auth_user'),
     Field('submitTime', 'datetime', default=request.now))
 
 db.define_table('Answer',
