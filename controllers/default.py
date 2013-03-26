@@ -1,3 +1,5 @@
+import hashlib
+
 def index():
     return "This is the 4350api. No view, only a JSON return.";
 
@@ -80,7 +82,10 @@ def api():
         elif first_arg == 'login':
 
             if check_params(['username', 'password'], params):
-                uNum = db((db.uvsUser.uvsUsername == params['username']) & (db.uvsUser.uvsPassword == params['password'])).count()
+                hash = hashlib.md5()
+                hash.update(params['password'])
+                hashPass = hash.digest()
+                uNum = db((db.uvsUser.uvsUsername == params['username']) & (db.uvsUser.uvsPassword == hashPass)).count()
                 
                 if uNum == 1:
                     raise HTTP(200)

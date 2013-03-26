@@ -32,7 +32,7 @@ class TestPostPolls(CommonTestCase):
         newestPid = self.pid
         notExistedPid = str(int(newestPid) + 1)
         response = self._put(notExistedPid, {'cid': self.cid})
-        self.assertEquals(response['code'], HTTPCode.NOT_FOUND)
+        self.assertEquals(response['code'], HTTPCode.BAD_REQUEST)
 
         # bad cid
         newestCid = self.cid
