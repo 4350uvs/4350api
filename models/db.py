@@ -32,8 +32,9 @@ db.define_table('userChose',
 
 # tables to store other stuff: surveys, lectures and elections
 
-auth = Auth(db)
-auth.define_tables()
+db.define_table('uvsUser',
+    Field('uvsUsername'),
+    Field('uvsPassword', 'text'))
 
 db.define_table('uvsSession',
     Field('name'),
